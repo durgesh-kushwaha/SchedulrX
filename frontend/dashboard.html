@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Smart Exam Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="dash-topbar">
+    <div class="dash-brand">
+      <div class="dash-mark">SE</div>
+      <div>
+        <h1>Smart Exam Scheduler</h1>
+        <p id="whoami">Loading user...</p>
+      </div>
+    </div>
+    <div class="dash-actions">
+      <span id="roleBadge" class="pill pill-muted">Role: -</span>
+      <button id="refreshBtn" class="btn ghost" type="button">Refresh</button>
+      <button id="generateBtn" class="btn primary" type="button">Generate Schedule</button>
+      <button id="downloadCsvBtn" class="btn ghost" type="button">CSV</button>
+      <button id="downloadPdfBtn" class="btn ghost" type="button">PDF</button>
+      <button id="logoutBtn" class="btn ghost" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="dash-layout">
+    <section id="adminWarning" class="dash-panel warning-banner hidden">
+      <strong>Admin required:</strong> this session cannot generate schedules. Sign in as <strong>admin</strong> to enable generation.
+    </section>
+
+    <section class="dash-stats">
+      <article class="kpi-card"><h3>Total Exams</h3><strong id="totalExams">0</strong></article>
+      <article class="kpi-card"><h3>Scheduled</h3><strong id="scheduledExams">0</strong></article>
+      <article class="kpi-card danger"><h3>Unplaced</h3><strong id="unplacedExams">0</strong></article>
+      <article class="kpi-card"><h3>Utilization</h3><strong id="utilization">0%</strong></article>
+    </section>
+
+    <section class="dash-panel filter-panel">
+      <div class="panel-head">
+        <h2>Filters</h2>
+        <span id="lastUpdated" class="meta">Last updated: -</span>
+      </div>
+      <div class="filter-grid">
+        <label>Search<input id="searchInput" type="text" placeholder="Subject or teacher" /></label>
+        <label>Status
+          <select id="statusFilter">
+            <option value="all">All</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="unplaced">Unplaced</option>
+          </select>
+        </label>
+        <label>Sort
+          <select id="sortBy">
+            <option value="datetime">Date & Time</option>
+            <option value="subject">Subject</option>
+            <option value="room">Room</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="dash-panel table-panel">
+      <div class="panel-head">
+        <h2>Schedule</h2>
+        <span id="rowCount" class="pill">0 rows</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Subject</th>
+              <th>Room</th>
+              <th>Teacher</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="dash-panel conflicts-panel">
+      <div class="panel-head"><h2>Conflicts</h2></div>
+      <ul id="conflictList" class="mini-list"></ul>
+    </aside>
+
+    <aside class="dash-panel analytics-panel">
+      <div class="panel-head"><h2>Analytics</h2></div>
+      <div class="split-lists">
+        <div>
+          <h4>Room Utilization</h4>
+          <ul id="roomUtilizationList" class="mini-list"></ul>
+        </div>
+        <div>
+          <h4>Teacher Load</h4>
+          <ul id="teacherLoadList" class="mini-list"></ul>
+        </div>
+      </div>
+    </aside>
+
+    <section class="dash-panel notifications-panel">
+      <div class="panel-head"><h2>Notifications</h2></div>
+      <ul id="notificationList" class="mini-list"></ul>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

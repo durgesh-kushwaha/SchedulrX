@@ -1,0 +1,11 @@
+com/examscheduler/model/Exam$Priority.class
+com/examscheduler/model/Teacher.class
+com/examscheduler/model/TimeSlot.class
+com/examscheduler/model/Student.class
+com/examscheduler/model/Exam.class
+com/examscheduler/model/ScheduledExam.class
+com/examscheduler/service/SchedulerService.class
+com/examscheduler/api/dto/ScheduleRowResponse.class
+com/examscheduler/model/Room.class
+com/examscheduler/model/ScheduledExam$Status.class
+com/examscheduler/service/ScheduleApiService.class
