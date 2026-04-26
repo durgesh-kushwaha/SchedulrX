@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,12 @@ public class OpsController {
     @PatchMapping("/notifications/{id}/read")
     public ResponseEntity<Void> markRead(@PathVariable long id, Authentication authentication) throws SQLException {
         opsService.markNotificationRead(authentication.getName(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/notifications/{id}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable long id, Authentication authentication) throws SQLException {
+        opsService.deleteNotification(authentication.getName(), id);
         return ResponseEntity.noContent().build();
     }
 

@@ -68,6 +68,7 @@ export MONGODB_DATABASE="<db>"
 - `GET /api/v1/analytics/overview` -> `ROLE_ADMIN`, `ROLE_TEACHER`
 - `GET /api/v1/audit-logs` -> `ROLE_ADMIN`
 - `GET /api/v1/notifications` -> all roles
+- `DELETE /api/v1/notifications/{id}` -> `ROLE_ADMIN`
 - `GET /api/v1/schedules/export/csv|pdf` -> all roles
 
 Default users are auto-created at startup if `app_user` is empty:
@@ -83,6 +84,13 @@ The React app scaffold is under `frontend/` and can be started independently.
 cd frontend
 npm install
 npm run dev
+```
+
+Run frontend tests:
+
+```bash
+cd frontend
+npm run test:run
 ```
 
 Default dev URL: `http://localhost:5173`

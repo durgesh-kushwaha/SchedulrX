@@ -135,6 +135,14 @@ export async function markNotificationRead(id) {
   }
 }
 
+export async function deleteNotification(id) {
+  try {
+    await api.delete(`/notifications/${id}`);
+  } catch (error) {
+    throw new Error(normalizeError(error));
+  }
+}
+
 async function downloadFile(url, filename) {
   const response = await api.get(url, { responseType: "blob" });
   const blobUrl = window.URL.createObjectURL(new Blob([response.data]));

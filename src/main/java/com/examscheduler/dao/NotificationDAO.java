@@ -105,6 +105,19 @@ public class NotificationDAO extends BaseDAO {
         }
     }
 
+    public void deleteByIdAndUsername(long id, String username) throws SQLException {
+        try {
+            Document user = collection("app_user").find(new Document("username", username)).first();
+            if (user == null) {
+                return;
+            }
+            long userId = getLong(user, "id", 0L);
+            collection("notification").deleteOne(new Document("id", id).append("userId", userId));
+        } catch (RuntimeException ex) {
+            throw new SQLException("Failed to delete notification in MongoDB", ex);
+        }
+    }
+
     private String firstString(Document doc, String... keys) {
         for (String key : keys) {
             Object value = doc.get(key);

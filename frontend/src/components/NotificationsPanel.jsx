@@ -1,4 +1,12 @@
-function NotificationsPanel({ notifications, onMarkRead, isLoading, errorMessage }) {
+function NotificationsPanel({
+  notifications,
+  onMarkRead,
+  onDelete,
+  canDelete,
+  isActionPending,
+  isLoading,
+  errorMessage,
+}) {
   if (isLoading) {
     return (
       <section className="surface-block">
@@ -29,11 +37,18 @@ function NotificationsPanel({ notifications, onMarkRead, isLoading, errorMessage
               <p>{n.message}</p>
               <small>{new Date(n.createdAt).toLocaleString()}</small>
             </div>
-            {!n.isRead && (
-              <button className="ghost-btn" onClick={() => onMarkRead(n.id)}>
-                Mark Read
-              </button>
-            )}
+            <div className="notification-actions">
+              {!n.isRead && (
+                <button className="ghost-btn" disabled={isActionPending} onClick={() => onMarkRead(n.id)}>
+                  Mark Read
+                </button>
+              )}
+              {canDelete && (
+                <button className="ghost-btn" disabled={isActionPending} onClick={() => onDelete(n.id)}>
+                  Remove
+                </button>
+              )}
+            </div>
           </article>
         ))}
       </div>

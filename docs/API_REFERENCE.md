@@ -98,6 +98,10 @@
 - Method: `PATCH`
 - Path: `/notifications/{id}/read`
 
+### Delete Notification (Admin)
+- Method: `DELETE`
+- Path: `/notifications/{id}`
+
 ## Real-Time Events
 
 ### Schedule Event Stream

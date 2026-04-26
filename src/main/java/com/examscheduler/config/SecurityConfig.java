@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/schedules/override").hasRole("ADMIN")
                 .requestMatchers("/api/v1/audit-logs").hasRole("ADMIN")
                 .requestMatchers("/api/v1/analytics/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/notifications/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/notifications/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
                 .requestMatchers("/api/v1/events/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
                 .requestMatchers("/api/v1/schedules/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")

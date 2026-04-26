@@ -434,6 +434,12 @@ select {
   font-size: 1.05rem;
 }
 
+.notification-actions {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
 @media (max-width: 1040px) {
   .login-layout {
     grid-template-columns: 1fr;

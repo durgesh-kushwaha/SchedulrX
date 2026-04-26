@@ -11,6 +11,7 @@ import AuditPanel from "./components/AuditPanel";
 import {
   analyticsOverview,
   clearSession,
+  deleteNotification,
   downloadCsv,
   downloadPdf,
   generateSchedule,
@@ -113,6 +114,16 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
   const markReadMutation = useMutation({
     mutationFn: markNotificationRead,
     onSuccess: () => notificationsQuery.refetch(),
+    onError: (error) => setLiveMessage(error.message),
+  });
+
+  const deleteNotificationMutation = useMutation({
+    mutationFn: deleteNotification,
+    onSuccess: () => {
+      setLiveMessage("Notification removed.");
+      notificationsQuery.refetch();
+    },
+    onError: (error) => setLiveMessage(error.message),
   });
 
   useEffect(() => {
@@ -269,6 +280,14 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
         <NotificationsPanel
           notifications={notifications}
           onMarkRead={(id) => markReadMutation.mutate(id)}
+          onDelete={(id) => {
+            const confirmed = window.confirm("Remove this notification?");
+            if (confirmed) {
+              deleteNotificationMutation.mutate(id);
+            }
+          }}
+          canDelete={activeRole === "ADMIN"}
+          isActionPending={markReadMutation.isPending || deleteNotificationMutation.isPending}
           isLoading={notificationsQuery.isLoading || notificationsQuery.isFetching}
           errorMessage={notificationsQuery.error?.message ?? ""}
         />
