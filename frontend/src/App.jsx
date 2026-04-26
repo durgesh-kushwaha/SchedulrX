@@ -8,6 +8,7 @@ import OverrideForm from "./components/OverrideForm";
 import NotificationsPanel from "./components/NotificationsPanel";
 import AnalyticsPanel from "./components/AnalyticsPanel";
 import AuditPanel from "./components/AuditPanel";
+import SimulationPanel from "./components/SimulationPanel";
 import {
   analyticsOverview,
   clearSession,
@@ -23,6 +24,7 @@ import {
   overrideSchedule,
   readSession,
   saveSession,
+  simulateSchedules,
   sseUrl,
 } from "./api";
 
@@ -59,6 +61,7 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
   const [activeView, setActiveView] = useState("schedule");
   const [filters, setFilters] = useState({ status: "", teacher: "", subject: "", page: 0, size: 50 });
   const [liveMessage, setLiveMessage] = useState("");
+  const [simulationResult, setSimulationResult] = useState(null);
 
   useEffect(() => {
     if (!session.roles.includes(activeRole)) {
@@ -111,6 +114,15 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
     },
   });
 
+  const simulationMutation = useMutation({
+    mutationFn: simulateSchedules,
+    onSuccess: (payload) => {
+      setSimulationResult(payload);
+      setLiveMessage(`Simulation generated ${payload.generatedAlternatives} alternative schedules.`);
+    },
+    onError: (error) => setLiveMessage(error.message),
+  });
+
   const markReadMutation = useMutation({
     mutationFn: markNotificationRead,
     onSuccess: () => notificationsQuery.refetch(),
@@ -159,13 +171,16 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
     { key: "schedule", label: "Schedule board" },
     { key: "notifications", label: "Notification center" },
     { key: "analytics", label: "Analytics" },
+    { key: "simulation", label: "Simulation lab" },
     { key: "override", label: "Override desk" },
     { key: "audit", label: "Audit trail" },
   ];
 
   const visibleMenu = menu.filter((item) => {
     if (item.key === "override" || item.key === "audit") return activeRole === "ADMIN";
-    if (item.key === "analytics") return activeRole === "ADMIN" || activeRole === "TEACHER";
+    if (item.key === "analytics" || item.key === "simulation") {
+      return activeRole === "ADMIN" || activeRole === "TEACHER";
+    }
     return true;
   });
 
@@ -298,6 +313,15 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
           data={analyticsQuery.data}
           isLoading={analyticsQuery.isLoading || analyticsQuery.isFetching}
           errorMessage={analyticsQuery.error?.message ?? ""}
+        />
+      )}
+
+      {activeView === "simulation" && (
+        <SimulationPanel
+          onRun={(payload) => simulationMutation.mutate(payload)}
+          data={simulationResult}
+          isPending={simulationMutation.isPending}
+          errorMessage={simulationMutation.error?.message ?? ""}
         />
       )}
 

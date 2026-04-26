@@ -27,3 +27,7 @@
   - authentication service test
   - model overlap regression checks
 - CI/CD and deployment hardening
+- What-if simulation and alternatives:
+  - `/schedules/simulate` endpoint for non-persistent scenario testing
+  - ranked alternative schedules with runtime and penalty metrics
+  - additional soft constraints for student daily load and morning CORE preference

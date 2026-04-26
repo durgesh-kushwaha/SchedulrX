@@ -70,6 +70,44 @@
 }
 ```
 
+### Simulate Alternative Schedules (Admin, Teacher)
+- Method: `POST`
+- Path: `/schedules/simulate`
+- Purpose: Runs what-if scheduling and returns ranked alternatives without persisting live timetable data.
+- Body (all fields optional):
+```json
+{
+  "alternatives": 3,
+  "minGapMinutes": 120,
+  "strategy": "HYBRID",
+  "blockedRoomIds": [2, 5],
+  "blockedSlotIds": [4],
+  "blockedDates": ["2026-05-11"]
+}
+```
+- Response:
+```json
+{
+  "message": "Simulation completed",
+  "requestedBy": "admin",
+  "strategy": "HYBRID",
+  "minGapMinutes": 120,
+  "requestedAlternatives": 3,
+  "generatedAlternatives": 3,
+  "alternatives": [
+    {
+      "rank": 1,
+      "totalExams": 8,
+      "scheduledExams": 8,
+      "unplacedExams": 0,
+      "softPenaltyScore": 3,
+      "runtimeMs": 42,
+      "rows": []
+    }
+  ]
+}
+```
+
 ### Export CSV
 - Method: `GET`
 - Path: `/schedules/export/csv`

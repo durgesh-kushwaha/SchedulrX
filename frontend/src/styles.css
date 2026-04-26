@@ -120,7 +120,9 @@ select {
 .login-form input,
 .filter-line input,
 .filter-line select,
-.override-form input {
+.override-form input,
+.simulation-form input,
+.simulation-form select {
   width: 100%;
   border: 1px solid #c3cee3;
   background: #fdfefe;
@@ -375,6 +377,77 @@ select {
   grid-column: span 3;
 }
 
+.simulation-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 0.7rem;
+  align-items: end;
+}
+
+.simulation-form label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.simulation-form .cta-btn {
+  grid-column: span 3;
+  width: fit-content;
+}
+
+.simulation-output {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.simulation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.simulation-meta span {
+  border: 1px solid #c9d6ee;
+  background: #f5f9ff;
+  color: #2f4f8c;
+  border-radius: 999px;
+  padding: 0.22rem 0.62rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.simulation-card {
+  border: 1px solid #d7e1ef;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.simulation-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.simulation-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.simulation-kpis span {
+  border: 1px solid #e5ebf7;
+  background: #f8fbff;
+  border-radius: 999px;
+  padding: 0.16rem 0.52rem;
+  font-size: 0.76rem;
+  color: #405e95;
+  font-weight: 600;
+}
+
 .metric-row {
   display: grid;
   gap: 0.65rem;
@@ -473,6 +546,14 @@ select {
   .override-form .wide {
     grid-column: span 2;
   }
+
+  .simulation-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .simulation-form .cta-btn {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 760px) {
@@ -492,11 +573,13 @@ select {
   .login-quick,
   .filter-line,
   .override-form,
+  .simulation-form,
   .metric-strip {
     grid-template-columns: 1fr;
   }
 
   .override-form .wide,
+  .simulation-form .cta-btn,
   .filter-line select {
     grid-column: auto;
   }

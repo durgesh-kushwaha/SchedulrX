@@ -22,8 +22,12 @@ public class MinGapConstraint implements Constraint {
     private final int minGapMinutes;
 
     public MinGapConstraint(Map<Integer, Set<Integer>> studentExamMap) {
+        this(studentExamMap, ScheduleConfig.MIN_GAP_MINUTES);
+    }
+
+    public MinGapConstraint(Map<Integer, Set<Integer>> studentExamMap, int minGapMinutes) {
         this.studentExamMap = studentExamMap;
-        this.minGapMinutes = ScheduleConfig.MIN_GAP_MINUTES;
+        this.minGapMinutes = Math.max(0, minGapMinutes);
     }
 
     @Override

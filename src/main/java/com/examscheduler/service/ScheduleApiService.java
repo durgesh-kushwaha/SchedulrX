@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.examscheduler.api.dto.PagedResponse;
 import com.examscheduler.api.dto.ScheduleOverrideRequest;
+import com.examscheduler.api.dto.ScheduleSimulationRequest;
+import com.examscheduler.api.dto.ScheduleSimulationResponse;
 import com.examscheduler.dao.ScheduleDAO;
 import com.examscheduler.model.ScheduledExam;
 
@@ -16,9 +18,11 @@ public class ScheduleApiService {
     private final SchedulerService schedulerService = new SchedulerService();
     private final ScheduleDAO scheduleDAO = new ScheduleDAO();
     private final OpsService opsService;
+    private final ScheduleSimulationService scheduleSimulationService;
 
-    public ScheduleApiService(OpsService opsService) {
+    public ScheduleApiService(OpsService opsService, ScheduleSimulationService scheduleSimulationService) {
         this.opsService = opsService;
+        this.scheduleSimulationService = scheduleSimulationService;
     }
 
     public List<ScheduledExam> generate(String actorUsername) throws SQLException {
@@ -47,5 +51,9 @@ public class ScheduleApiService {
 
     public ScheduledExam overrideSchedule(ScheduleOverrideRequest request, String actorUsername) throws SQLException {
         return opsService.overridePlacement(request, actorUsername);
+    }
+
+    public ScheduleSimulationResponse simulate(ScheduleSimulationRequest request, String actorUsername) throws SQLException {
+        return scheduleSimulationService.simulate(request, actorUsername);
     }
 }

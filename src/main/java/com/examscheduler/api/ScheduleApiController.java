@@ -17,6 +17,8 @@ import com.examscheduler.api.dto.PagedResponse;
 import com.examscheduler.api.dto.ScheduleOverrideRequest;
 import com.examscheduler.api.dto.ScheduleOverrideResponse;
 import com.examscheduler.api.dto.ScheduleRowResponse;
+import com.examscheduler.api.dto.ScheduleSimulationRequest;
+import com.examscheduler.api.dto.ScheduleSimulationResponse;
 import com.examscheduler.model.ScheduledExam;
 import com.examscheduler.service.ScheduleApiService;
 
@@ -71,6 +73,15 @@ public class ScheduleApiController {
         String actor = authentication != null ? authentication.getName() : "system";
         ScheduledExam row = scheduleApiService.overrideSchedule(request, actor);
         return ResponseEntity.ok(new ScheduleOverrideResponse("Override applied successfully", toRow(row)));
+    }
+
+    @PostMapping("/simulate")
+    public ResponseEntity<ScheduleSimulationResponse> simulate(
+        @Valid @RequestBody(required = false) ScheduleSimulationRequest request,
+        Authentication authentication
+    ) throws SQLException {
+        String actor = authentication != null ? authentication.getName() : "system";
+        return ResponseEntity.ok(scheduleApiService.simulate(request, actor));
     }
 
     private ScheduleRowResponse toRow(ScheduledExam se) {

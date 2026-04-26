@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.examscheduler.constraints.Constraint;
+import com.examscheduler.constraints.CoreMorningPreferenceConstraint;
+import com.examscheduler.constraints.MaxStudentExamsPerDayConstraint;
 import com.examscheduler.constraints.MinGapConstraint;
 import com.examscheduler.constraints.NoStudentOverlapConstraint;
 import com.examscheduler.constraints.NoTeacherOverlapConstraint;
@@ -71,7 +73,9 @@ public class SchedulerService {
             new RoomCapacityConstraint()
         );
         softConstraints = List.of(
-            new MinGapConstraint(studentExamMap)
+            new MinGapConstraint(studentExamMap),
+            new MaxStudentExamsPerDayConstraint(studentExamMap, ScheduleConfig.SOFT_MAX_EXAMS_PER_DAY),
+            new CoreMorningPreferenceConstraint()
         );
 
         // Step 3: Sort exams (MCV heuristic)

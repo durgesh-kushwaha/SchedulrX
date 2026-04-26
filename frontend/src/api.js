@@ -100,6 +100,15 @@ export async function overrideSchedule(payload) {
   }
 }
 
+export async function simulateSchedules(payload = {}) {
+  try {
+    const { data } = await api.post("/schedules/simulate", payload);
+    return data;
+  } catch (error) {
+    throw new Error(normalizeError(error));
+  }
+}
+
 export async function analyticsOverview() {
   try {
     const { data } = await api.get("/analytics/overview");

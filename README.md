@@ -13,6 +13,7 @@ Production-oriented smart exam scheduling platform with:
 - REST API for schedule generation and retrieval
 - JWT authentication + RBAC with role-protected endpoints
 - Manual override endpoint with full hard-constraint revalidation
+- Multi-alternative what-if simulation API (non-persistent)
 - Search/filter/pagination APIs
 - SSE live update channel + notification module
 - Export APIs (CSV/PDF)
@@ -64,6 +65,7 @@ export MONGODB_DATABASE="<db>"
 ### Role-based access
 - `POST /api/v1/schedules/generate` -> `ROLE_ADMIN`
 - `POST /api/v1/schedules/override` -> `ROLE_ADMIN`
+- `POST /api/v1/schedules/simulate` -> `ROLE_ADMIN`, `ROLE_TEACHER`
 - `GET /api/v1/schedules` -> `ROLE_ADMIN`, `ROLE_TEACHER`, `ROLE_STUDENT`
 - `GET /api/v1/analytics/overview` -> `ROLE_ADMIN`, `ROLE_TEACHER`
 - `GET /api/v1/audit-logs` -> `ROLE_ADMIN`
@@ -131,4 +133,4 @@ Optional environment variables for smoke auth/target:
 - `docs/ARCHITECTURE.md`
 - `docs/IMPLEMENTATION_PLAN.md`
 - `docs/API_REFERENCE.md`
-# SchedulrX
+- `docs/FEATURE_COVERAGE_AUDIT.md`

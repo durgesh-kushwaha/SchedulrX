@@ -41,6 +41,8 @@ The platform follows a modular monolith architecture with clean layering:
 
 ### Soft constraints (optimize quality)
 - Minimum gap between exams for same student cohort
+- Cap preferred maximum daily exam load per student cohort
+- Prefer morning slots for CORE subjects
 - Subject prioritization and load balancing
 - Optional room preference (future phase)
 
@@ -54,6 +56,12 @@ Why this approach:
 - Performs better than pure brute-force on realistic datasets
 - Explainable and maintainable for academic admin workflows
 - Supports incremental enhancements (weights, strategy plugins)
+
+### What-if simulation mode
+- API endpoint provides non-persistent, ranked schedule alternatives.
+- Supports blocked rooms, blocked slots, blocked dates, and configurable min-gap.
+- Supports strategy toggle: `HYBRID` (greedy + repair + optimization) or `GREEDY_ONLY`.
+- Returns per-alternative metrics (unplaced exams, soft penalty score, runtime).
 
 ## 4. Database Design
 

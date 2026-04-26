@@ -1,3 +1,6 @@
 /Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/model/TimeSlotTest.java
 /Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/service/ConstraintValidationServiceTest.java
 /Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/service/AuthServiceTest.java
+/Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/api/OpsControllerTest.java
+/Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/constraints/MaxStudentExamsPerDayConstraintTest.java
+/Users/durgesh/Documents/Smart Exam Sheduling System/src/test/java/com/examscheduler/constraints/CoreMorningPreferenceConstraintTest.java
