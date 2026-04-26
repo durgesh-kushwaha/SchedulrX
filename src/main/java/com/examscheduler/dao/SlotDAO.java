@@ -45,20 +45,23 @@ public class SlotDAO extends BaseDAO {
         String startRaw = firstString(rs, "startTime", "start_time");
         String endRaw = firstString(rs, "endTime", "end_time");
 
-        return new TimeSlot(
+        TimeSlot slot = new TimeSlot(
             getInt(rs, "id", 0),
             dateRaw == null ? null : LocalDate.parse(dateRaw),
             startRaw == null ? null : LocalTime.parse(startRaw),
             endRaw == null ? null : LocalTime.parse(endRaw)
         );
+        slot.setLabel(firstString(rs, "label"));
+        return slot;
     }
 
-    private String firstString(Document doc, String primary, String fallback) {
-        Object first = doc.get(primary);
-        if (first != null) {
-            return first.toString();
+    private String firstString(Document doc, String... keys) {
+        for (String key : keys) {
+            Object value = doc.get(key);
+            if (value != null) {
+                return value.toString();
+            }
         }
-        Object second = doc.get(fallback);
-        return second == null ? null : second.toString();
+        return null;
     }
 }

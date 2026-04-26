@@ -25,7 +25,10 @@ import com.examscheduler.constraints.MaxStudentExamsPerDayConstraint;
 import com.examscheduler.constraints.MinGapConstraint;
 import com.examscheduler.constraints.NoStudentOverlapConstraint;
 import com.examscheduler.constraints.NoTeacherOverlapConstraint;
+import com.examscheduler.constraints.PreferredSessionConstraint;
+import com.examscheduler.constraints.RoomRequirementsConstraint;
 import com.examscheduler.constraints.RoomCapacityConstraint;
+import com.examscheduler.constraints.SlotDurationConstraint;
 import com.examscheduler.dao.ExamDAO;
 import com.examscheduler.dao.RoomDAO;
 import com.examscheduler.dao.SlotDAO;
@@ -41,15 +44,22 @@ public class ScheduleSimulationService {
     private final ExamDAO examDAO = new ExamDAO();
     private final RoomDAO roomDAO = new RoomDAO();
     private final SlotDAO slotDAO = new SlotDAO();
+    private final PlanningService planningService;
+
+    public ScheduleSimulationService(PlanningService planningService) {
+        this.planningService = planningService;
+    }
 
     public ScheduleSimulationResponse simulate(ScheduleSimulationRequest request, String actorUsername) throws SQLException {
+        planningService.assertReadyForGeneration();
         ScheduleSimulationRequest safeRequest = request == null
             ? new ScheduleSimulationRequest(null, null, null, null, null, null)
             : request;
 
+        PlanningService.SchedulingRules rules = planningService.schedulingRules();
         int requestedAlternatives = normalizeAlternativeCount(safeRequest.alternatives());
         int minGapMinutes = safeRequest.minGapMinutes() == null
-            ? ScheduleConfig.MIN_GAP_MINUTES
+            ? rules.minGapMinutes()
             : Math.max(0, safeRequest.minGapMinutes());
 
         Strategy strategy = Strategy.from(safeRequest.strategy());
@@ -86,6 +96,7 @@ public class ScheduleSimulationService {
             rooms,
             studentExamMap,
             minGapMinutes,
+            rules.maxExamsPerDay(),
             strategy
         );
 
@@ -106,6 +117,7 @@ public class ScheduleSimulationService {
                                                                 List<Room> rooms,
                                                                 Map<Integer, Set<Integer>> studentExamMap,
                                                                 int minGapMinutes,
+                                                                int maxExamsPerDay,
                                                                 Strategy strategy) {
         List<ScheduleAlternativeResponse> raw = new ArrayList<>();
         Set<String> signatures = new HashSet<>();
@@ -120,6 +132,7 @@ public class ScheduleSimulationService {
                 rooms,
                 studentExamMap,
                 minGapMinutes,
+                maxExamsPerDay,
                 strategy,
                 seedBase + attempt
             );
@@ -157,6 +170,7 @@ public class ScheduleSimulationService {
                                                      List<Room> rooms,
                                                      Map<Integer, Set<Integer>> studentExamMap,
                                                      int minGapMinutes,
+                                                     int maxExamsPerDay,
                                                      Strategy strategy,
                                                      long seed) {
         long startedAt = System.currentTimeMillis();
@@ -164,13 +178,16 @@ public class ScheduleSimulationService {
         List<Constraint> hardConstraints = List.of(
             new NoStudentOverlapConstraint(studentExamMap),
             new NoTeacherOverlapConstraint(),
-            new RoomCapacityConstraint()
+            new RoomCapacityConstraint(),
+            new SlotDurationConstraint(),
+            new RoomRequirementsConstraint()
         );
 
         List<Constraint> softConstraints = List.of(
             new MinGapConstraint(studentExamMap, minGapMinutes),
-            new MaxStudentExamsPerDayConstraint(studentExamMap, ScheduleConfig.SOFT_MAX_EXAMS_PER_DAY),
-            new CoreMorningPreferenceConstraint()
+            new MaxStudentExamsPerDayConstraint(studentExamMap, maxExamsPerDay),
+            new CoreMorningPreferenceConstraint(),
+            new PreferredSessionConstraint()
         );
 
         List<Exam> orderedExams = new ArrayList<>(exams);

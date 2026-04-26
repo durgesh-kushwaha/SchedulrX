@@ -9,6 +9,7 @@ import NotificationsPanel from "./components/NotificationsPanel";
 import AnalyticsPanel from "./components/AnalyticsPanel";
 import AuditPanel from "./components/AuditPanel";
 import SimulationPanel from "./components/SimulationPanel";
+import SetupStudio from "./components/SetupStudio";
 import {
   analyticsOverview,
   clearSession,
@@ -16,6 +17,8 @@ import {
   downloadCsv,
   downloadPdf,
   generateSchedule,
+  loadPlanningDataset,
+  loadPlanningTemplate,
   listAuditLogs,
   listNotifications,
   listSchedule,
@@ -23,6 +26,7 @@ import {
   markNotificationRead,
   overrideSchedule,
   readSession,
+  savePlanningDataset,
   saveSession,
   simulateSchedules,
   sseUrl,
@@ -85,6 +89,13 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
     enabled: activeRole === "ADMIN" || activeRole === "TEACHER",
   });
 
+  const planningQuery = useQuery({
+    queryKey: ["planning"],
+    queryFn: loadPlanningDataset,
+    enabled: activeRole === "ADMIN",
+    refetchOnWindowFocus: false,
+  });
+
   const auditQuery = useQuery({
     queryKey: ["audit", activeRole],
     queryFn: () => listAuditLogs({ page: 0, size: 25 }),
@@ -100,6 +111,22 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
       analyticsQuery.refetch();
       auditQuery.refetch();
     },
+    onError: (error) => setLiveMessage(error.message),
+  });
+
+  const planningSaveMutation = useMutation({
+    mutationFn: savePlanningDataset,
+    onSuccess: () => {
+      setLiveMessage("Planning dataset saved.");
+      planningQuery.refetch();
+      scheduleQuery.refetch();
+      analyticsQuery.refetch();
+    },
+    onError: (error) => setLiveMessage(error.message),
+  });
+
+  const planningTemplateMutation = useMutation({
+    mutationFn: loadPlanningTemplate,
     onError: (error) => setLiveMessage(error.message),
   });
 
@@ -155,19 +182,22 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
   const rows = scheduleQuery.data?.items ?? [];
   const notifications = notificationsQuery.data?.items ?? [];
   const audits = auditQuery.data?.items ?? [];
+  const planningReadiness = planningQuery.data?.readiness;
+  const planningReady = !!planningReadiness?.ready;
 
   const stats = useMemo(() => {
     const scheduled = rows.filter((row) => row.status === "SCHEDULED").length;
     const conflicts = rows.filter((row) => row.status !== "SCHEDULED").length;
     return {
-      total: scheduleQuery.data?.total ?? rows.length,
+      total: planningReadiness?.examCount ?? scheduleQuery.data?.total ?? rows.length,
       scheduled,
       conflicts,
       unread: notifications.filter((item) => !item.isRead).length,
     };
-  }, [notifications, rows, scheduleQuery.data?.total]);
+  }, [notifications, planningReadiness?.examCount, rows, scheduleQuery.data?.total]);
 
   const menu = [
+    { key: "planning", label: "Planning studio" },
     { key: "schedule", label: "Schedule board" },
     { key: "notifications", label: "Notification center" },
     { key: "analytics", label: "Analytics" },
@@ -177,6 +207,7 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
   ];
 
   const visibleMenu = menu.filter((item) => {
+    if (item.key === "planning") return activeRole === "ADMIN";
     if (item.key === "override" || item.key === "audit") return activeRole === "ADMIN";
     if (item.key === "analytics" || item.key === "simulation") {
       return activeRole === "ADMIN" || activeRole === "TEACHER";
@@ -190,22 +221,32 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
     }
   }, [activeView, visibleMenu]);
 
+  useEffect(() => {
+    if (activeRole === "ADMIN" && planningReadiness && !planningReadiness.ready && activeView === "schedule") {
+      setActiveView("planning");
+    }
+  }, [activeRole, activeView, planningReadiness]);
+
   return (
     <div className="workspace-layout">
       <header className="workspace-top">
         <div>
           <p className="hero-tag">Operations Console</p>
           <h1>Exam Control Matrix</h1>
-          <p className="workspace-sub">Signed in as {session.username || "unknown"}</p>
+          <p className="workspace-sub">
+            Signed in as {session.username || "unknown"}
+            {planningQuery.data?.dataset?.config?.institutionName ? ` · ${planningQuery.data.dataset.config.institutionName}` : ""}
+            {planningQuery.data?.dataset?.config?.termName ? ` · ${planningQuery.data.dataset.config.termName}` : ""}
+          </p>
         </div>
         <div className="workspace-actions">
           <button
             type="button"
             className="cta-btn"
-            disabled={activeRole !== "ADMIN" || generateMutation.isPending}
+            disabled={activeRole !== "ADMIN" || generateMutation.isPending || !planningReady}
             onClick={() => generateMutation.mutate()}
           >
-            {generateMutation.isPending ? "Generating" : "Generate Schedule"}
+            {generateMutation.isPending ? "Generating" : planningReady ? "Generate Schedule" : "Complete Setup First"}
           </button>
           <button type="button" className="ghost-btn" onClick={downloadCsv}>Export CSV</button>
           <button type="button" className="ghost-btn" onClick={downloadPdf}>Export PDF</button>
@@ -258,6 +299,23 @@ function DashboardPage({ session, onSessionUpdate, onLogout }) {
           </button>
         ))}
       </nav>
+
+      {activeView === "planning" && (
+        <SetupStudio
+          datasetResponse={planningQuery.data}
+          templateResponse={planningTemplateMutation.data}
+          onLoadTemplate={() => planningTemplateMutation.mutate()}
+          onSave={(payload) => planningSaveMutation.mutate(payload)}
+          onGenerate={() => generateMutation.mutate()}
+          isLoading={planningQuery.isLoading || planningQuery.isFetching}
+          isSaving={planningSaveMutation.isPending}
+          isGenerating={generateMutation.isPending}
+          errorMessage={planningQuery.error?.message ?? ""}
+          saveError={planningSaveMutation.error?.message ?? ""}
+          templateError={planningTemplateMutation.error?.message ?? ""}
+          generateError={generateMutation.error?.message ?? ""}
+        />
+      )}
 
       {activeView === "schedule" && (
         <>

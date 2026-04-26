@@ -19,16 +19,22 @@ public class ScheduleApiService {
     private final ScheduleDAO scheduleDAO = new ScheduleDAO();
     private final OpsService opsService;
     private final ScheduleSimulationService scheduleSimulationService;
+    private final PlanningService planningService;
 
-    public ScheduleApiService(OpsService opsService, ScheduleSimulationService scheduleSimulationService) {
+    public ScheduleApiService(OpsService opsService,
+                              ScheduleSimulationService scheduleSimulationService,
+                              PlanningService planningService) {
         this.opsService = opsService;
         this.scheduleSimulationService = scheduleSimulationService;
+        this.planningService = planningService;
     }
 
     public List<ScheduledExam> generate(String actorUsername) throws SQLException {
+        planningService.assertReadyForGeneration();
+        PlanningService.SchedulingRules rules = planningService.schedulingRules();
         Long runId = scheduleDAO.createScheduleRun("RUNNING", actorUsername);
         try {
-            List<ScheduledExam> rows = schedulerService.generateSchedule();
+            List<ScheduledExam> rows = schedulerService.generateSchedule(rules.minGapMinutes(), rules.maxExamsPerDay());
             int unplaced = (int) rows.stream().filter(se -> !se.isScheduled()).count();
             if (runId != null) {
                 scheduleDAO.completeScheduleRun(runId, "COMPLETED", 0, 0, unplaced);

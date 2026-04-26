@@ -33,6 +33,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/actuator/health", "/api/v1/auth/login", "/api/v1/auth/signup").permitAll()
+                .requestMatchers("/api/v1/planning/**").hasRole("ADMIN")
                 .requestMatchers("/api/v1/schedules/generate").hasRole("ADMIN")
                 .requestMatchers("/api/v1/schedules/override").hasRole("ADMIN")
                 .requestMatchers("/api/v1/schedules/simulate").hasAnyRole("ADMIN", "TEACHER")

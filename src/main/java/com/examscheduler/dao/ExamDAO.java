@@ -27,12 +27,21 @@ public class ExamDAO extends BaseDAO {
             Map<Integer, Teacher> teacherById = new HashMap<>();
             for (Document t : collection("teacher").find()) {
                 int id = valueAsInt(t, "id", 0);
-                teacherById.put(id, new Teacher(
+                Teacher teacher = new Teacher(
                     id,
                     firstString(t, "name", "teacher_name"),
                     firstString(t, "department"),
                     firstString(t, "email")
-                ));
+                );
+                Object unavailableRaw = t.get("unavailableSlotIds");
+                if (unavailableRaw instanceof List<?> unavailableSlots) {
+                    for (Object slotId : unavailableSlots) {
+                        if (slotId instanceof Number number) {
+                            teacher.addUnavailableSlot(number.intValue());
+                        }
+                    }
+                }
+                teacherById.put(id, teacher);
             }
 
             Map<Integer, Integer> enrollmentCountByExam = new HashMap<>();
@@ -60,6 +69,15 @@ public class ExamDAO extends BaseDAO {
                     priority,
                     teacher
                 );
+                exam.setDepartment(firstString(e, "department"));
+                exam.setRequiresProjector(firstBoolean(e, "requiresProjector", "requires_projector"));
+                exam.setRequiresComputers(firstBoolean(e, "requiresComputers", "requires_computers"));
+                exam.setPreferredSession(firstString(e, "preferredSession", "preferred_session"));
+                exam.setDifficultyLevel(firstInt(e, "difficultyLevel", "difficulty_level"));
+                String examTypeRaw = firstString(e, "examType", "exam_type");
+                if (examTypeRaw != null && !examTypeRaw.isBlank()) {
+                    exam.setExamType(Exam.ExamType.valueOf(examTypeRaw.toUpperCase()));
+                }
                 exam.setEnrollmentCount(enrollmentCountByExam.getOrDefault(examId, 0));
                 exams.add(exam);
             }
@@ -121,5 +139,17 @@ public class ExamDAO extends BaseDAO {
             }
         }
         return null;
+    }
+
+    private boolean firstBoolean(Document doc, String primary, String fallback) {
+        Object first = doc.get(primary);
+        if (first instanceof Boolean b) {
+            return b;
+        }
+        Object second = doc.get(fallback);
+        if (second instanceof Boolean b) {
+            return b;
+        }
+        return false;
     }
 }

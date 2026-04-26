@@ -19,10 +19,13 @@ Legend:
   - no student overlap
   - no teacher overlap
   - room capacity and room double booking checks
+  - slot duration fit checks
+  - room equipment checks (projector/computer needs)
 - Soft constraints: PARTIAL
   - min student gap: IMPLEMENTED
   - max student exams/day preference: IMPLEMENTED
   - core morning preference: IMPLEMENTED
+  - preferred session matching: IMPLEMENTED
   - faculty overload and long-gap balancing: MISSING
 - Scheduling techniques: PARTIAL
   - greedy: IMPLEMENTED
@@ -38,16 +41,17 @@ Legend:
 ## 3. Data Management Modules
 - Student module: PARTIAL
   - profile and registrations: IMPLEMENTED
-  - eligibility and special-needs flags: MISSING
+  - special-needs accommodation fields: IMPLEMENTED
+  - eligibility workflows: MISSING
 - Faculty module: PARTIAL
-  - availability and subject mapping: PARTIAL
+  - availability and subject mapping: IMPLEMENTED
   - invigilation preferences and workload history: MISSING
 - Course/subject module: PARTIAL
   - code and duration: IMPLEMENTED
-  - type (lab/theory/online): MISSING
+  - type (lab/theory/online): IMPLEMENTED
 - Room/hall management: PARTIAL
   - capacity and building: IMPLEMENTED
-  - seating type and special equipment model: MISSING
+  - seating type and special equipment model: IMPLEMENTED
 
 ## 4. Exam Scheduling Features
 - Core functions: IMPLEMENTED
@@ -103,7 +107,7 @@ Legend:
 - AI proctoring: MISSING
 
 ## 13. User Interfaces
-- Admin controls and override tools: IMPLEMENTED
+- Admin controls, planning studio, and override tools: IMPLEMENTED
 - Faculty view and simulation tools: IMPLEMENTED
 - Student schedule/notification view: IMPLEMENTED
 - admit-card and seat download workflow: MISSING
@@ -119,7 +123,7 @@ Legend:
 - scale validation for very large cohorts: PARTIAL (no load benchmark artifacts)
 
 ## Upgrade Priorities (Recommended)
-1. Add explicit eligibility/special-needs model + seating allocation engine.
+1. Add seating allocation, anti-cheating spacing, and hall maps.
 2. Add invigilation duty assignment, swap workflow, and attendance logs.
 3. Add connectors for calendar/LMS/ERP and outbound email/SMS channels.
 4. Add algorithm benchmark suite comparing hybrid vs ILP/CP-SAT on quality and runtime.

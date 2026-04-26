@@ -10,6 +10,8 @@ public class Student {
     private String rollNo;
     private int semester;
     private String branch;
+    private int extraTimeMinutes;
+    private String specialNeedsNotes;
 
     public Student() {}
 
@@ -35,6 +37,12 @@ public class Student {
 
     public String getBranch() { return branch; }
     public void setBranch(String b) { this.branch = b; }
+
+    public int getExtraTimeMinutes() { return extraTimeMinutes; }
+    public void setExtraTimeMinutes(int extraTimeMinutes) { this.extraTimeMinutes = extraTimeMinutes; }
+
+    public String getSpecialNeedsNotes() { return specialNeedsNotes; }
+    public void setSpecialNeedsNotes(String specialNeedsNotes) { this.specialNeedsNotes = specialNeedsNotes; }
 
     @Override
     public String toString() {

@@ -122,7 +122,10 @@ select {
 .filter-line select,
 .override-form input,
 .simulation-form input,
-.simulation-form select {
+.simulation-form select,
+.planner-table input,
+.planner-table select,
+.planner-config-grid input {
   width: 100%;
   border: 1px solid #c3cee3;
   background: #fdfefe;
@@ -513,6 +516,74 @@ select {
   min-width: 120px;
 }
 
+.planner-layout {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.planner-intro,
+.planner-section-head,
+.planner-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.planner-intro-copy,
+.planner-section-head > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.planner-intro p,
+.planner-section-head p {
+  color: var(--muted);
+}
+
+.planner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.planner-summary {
+  gap: 0.95rem;
+}
+
+.planner-issues {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.planner-config-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.planner-config-grid label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 600;
+}
+
+.planner-table-wrap {
+  overflow-x: auto;
+}
+
+.planner-table th,
+.planner-table td {
+  vertical-align: top;
+}
+
+.planner-table input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
 @media (max-width: 1040px) {
   .login-layout {
     grid-template-columns: 1fr;
@@ -554,6 +625,11 @@ select {
   .simulation-form .cta-btn {
     grid-column: span 2;
   }
+
+  .planner-issues,
+  .planner-config-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -574,7 +650,9 @@ select {
   .filter-line,
   .override-form,
   .simulation-form,
-  .metric-strip {
+  .metric-strip,
+  .planner-issues,
+  .planner-config-grid {
     grid-template-columns: 1fr;
   }
 
@@ -589,9 +667,17 @@ select {
     align-items: stretch;
   }
 
+  .planner-intro,
+  .planner-section-head,
+  .planner-status {
+    flex-direction: column;
+  }
+
   .notification .ghost-btn,
   .workspace-actions .ghost-btn,
-  .workspace-actions .cta-btn {
+  .workspace-actions .cta-btn,
+  .planner-actions .ghost-btn,
+  .planner-actions .cta-btn {
     width: 100%;
   }
 

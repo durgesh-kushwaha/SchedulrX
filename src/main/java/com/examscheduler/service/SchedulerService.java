@@ -13,7 +13,10 @@ import com.examscheduler.constraints.MaxStudentExamsPerDayConstraint;
 import com.examscheduler.constraints.MinGapConstraint;
 import com.examscheduler.constraints.NoStudentOverlapConstraint;
 import com.examscheduler.constraints.NoTeacherOverlapConstraint;
+import com.examscheduler.constraints.PreferredSessionConstraint;
+import com.examscheduler.constraints.RoomRequirementsConstraint;
 import com.examscheduler.constraints.RoomCapacityConstraint;
+import com.examscheduler.constraints.SlotDurationConstraint;
 import com.examscheduler.dao.ExamDAO;
 import com.examscheduler.dao.RoomDAO;
 import com.examscheduler.dao.ScheduleDAO;
@@ -54,7 +57,12 @@ public class SchedulerService {
      * Entry point. Returns the complete schedule (placed + unplaced exams).
      */
     public List<ScheduledExam> generateSchedule() throws SQLException {
+        return generateSchedule(ScheduleConfig.MIN_GAP_MINUTES, ScheduleConfig.SOFT_MAX_EXAMS_PER_DAY);
+    }
+
+    public List<ScheduledExam> generateSchedule(int minGapMinutes, int maxExamsPerDay) throws SQLException {
         System.out.println("\n[SCHEDULER] Starting schedule generation...");
+        schedule.clear();
 
         // Step 1: Load data
         List<Exam> exams = examDAO.findAllWithEnrollmentCount();
@@ -66,16 +74,25 @@ public class SchedulerService {
         System.out.println("[SCHEDULER] Loaded: " + exams.size() + " exams, "
             + slots.size() + " slots, " + rooms.size() + " rooms.");
 
+        if (exams.isEmpty() || slots.isEmpty() || rooms.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Planning dataset is incomplete. Make sure exams, time slots, and rooms are configured before generating."
+            );
+        }
+
         // Step 2: Initialize constraints
         hardConstraints = List.of(
             new NoStudentOverlapConstraint(studentExamMap),
             new NoTeacherOverlapConstraint(),
-            new RoomCapacityConstraint()
+            new RoomCapacityConstraint(),
+            new SlotDurationConstraint(),
+            new RoomRequirementsConstraint()
         );
         softConstraints = List.of(
-            new MinGapConstraint(studentExamMap),
-            new MaxStudentExamsPerDayConstraint(studentExamMap, ScheduleConfig.SOFT_MAX_EXAMS_PER_DAY),
-            new CoreMorningPreferenceConstraint()
+            new MinGapConstraint(studentExamMap, minGapMinutes),
+            new MaxStudentExamsPerDayConstraint(studentExamMap, maxExamsPerDay),
+            new CoreMorningPreferenceConstraint(),
+            new PreferredSessionConstraint()
         );
 
         // Step 3: Sort exams (MCV heuristic)

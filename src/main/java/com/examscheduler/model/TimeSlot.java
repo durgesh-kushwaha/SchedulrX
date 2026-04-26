@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 public class TimeSlot {
 
     private int id;
+    private String label;
     private LocalDate examDate;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -28,6 +29,9 @@ public class TimeSlot {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
 
     public LocalDate getExamDate() { return examDate; }
     public void setExamDate(LocalDate d) { this.examDate = d; }
@@ -62,6 +66,13 @@ public class TimeSlot {
         if (!this.examDate.equals(other.examDate)) return Long.MAX_VALUE;
         // Gap from this.end to other.start (might be negative if overlapping)
         return ChronoUnit.MINUTES.between(this.endTime, other.startTime);
+    }
+
+    public long durationMinutes() {
+        if (startTime == null || endTime == null) {
+            return 0L;
+        }
+        return Math.max(0L, ChronoUnit.MINUTES.between(startTime, endTime));
     }
 
     @Override

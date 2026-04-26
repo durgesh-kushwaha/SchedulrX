@@ -7,7 +7,9 @@ import java.util.Set;
 import com.examscheduler.constraints.Constraint;
 import com.examscheduler.constraints.NoStudentOverlapConstraint;
 import com.examscheduler.constraints.NoTeacherOverlapConstraint;
+import com.examscheduler.constraints.RoomRequirementsConstraint;
 import com.examscheduler.constraints.RoomCapacityConstraint;
+import com.examscheduler.constraints.SlotDurationConstraint;
 import com.examscheduler.model.ScheduledExam;
 
 public class ConstraintValidationService {
@@ -18,7 +20,9 @@ public class ConstraintValidationService {
         List<Constraint> hardConstraints = List.of(
             new NoStudentOverlapConstraint(studentExamMap),
             new NoTeacherOverlapConstraint(),
-            new RoomCapacityConstraint()
+            new RoomCapacityConstraint(),
+            new SlotDurationConstraint(),
+            new RoomRequirementsConstraint()
         );
 
         for (Constraint constraint : hardConstraints) {

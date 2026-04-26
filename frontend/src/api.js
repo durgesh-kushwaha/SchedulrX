@@ -82,6 +82,33 @@ export async function generateSchedule() {
   }
 }
 
+export async function loadPlanningDataset() {
+  try {
+    const { data } = await api.get("/planning/dataset");
+    return data;
+  } catch (error) {
+    throw new Error(normalizeError(error));
+  }
+}
+
+export async function savePlanningDataset(payload) {
+  try {
+    const { data } = await api.put("/planning/dataset", payload);
+    return data;
+  } catch (error) {
+    throw new Error(normalizeError(error));
+  }
+}
+
+export async function loadPlanningTemplate() {
+  try {
+    const { data } = await api.get("/planning/template");
+    return data;
+  } catch (error) {
+    throw new Error(normalizeError(error));
+  }
+}
+
 export async function listSchedule(params = {}) {
   try {
     const { data } = await api.get("/schedules", { params });

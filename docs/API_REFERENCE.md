@@ -29,6 +29,7 @@
 ### Generate Schedule (Admin)
 - Method: `POST`
 - Path: `/schedules/generate`
+- Notes: Uses the saved planning dataset. If teachers, rooms, slots, students, or exams are missing, the API returns a validation error instead of generating an empty schedule.
 
 ### List Schedule (All Roles)
 - Method: `GET`
@@ -115,6 +116,23 @@
 ### Export PDF
 - Method: `GET`
 - Path: `/schedules/export/pdf`
+
+## Planning Dataset
+
+### Load Current Planning Dataset (Admin)
+- Method: `GET`
+- Path: `/planning/dataset`
+- Purpose: Returns the full saved scenario used by the scheduler, plus readiness diagnostics.
+
+### Save Planning Dataset (Admin)
+- Method: `PUT`
+- Path: `/planning/dataset`
+- Purpose: Replaces the working scenario (teachers, rooms, slots, students, exams/enrollments) and clears any stale generated schedule.
+
+### Load Starter Template (Admin)
+- Method: `GET`
+- Path: `/planning/template`
+- Purpose: Returns a ready-to-save sample dataset for quick testing and demos.
 
 ## Operations
 

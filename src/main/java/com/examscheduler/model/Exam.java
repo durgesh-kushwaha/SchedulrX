@@ -8,6 +8,7 @@ package com.examscheduler.model;
 public class Exam {
 
     public enum Priority { CORE, ELECTIVE }
+    public enum ExamType { THEORY, LAB, ONLINE }
 
     private int id;
     private String subjectName;
@@ -15,6 +16,12 @@ public class Exam {
     private int durationMinutes;
     private Priority priority;
     private Teacher teacher;
+    private String department;
+    private ExamType examType = ExamType.THEORY;
+    private boolean requiresProjector;
+    private boolean requiresComputers;
+    private String preferredSession;
+    private int difficultyLevel = 3;
 
     // Loaded separately - how many students are enrolled
     // Used for room selection and greedy sort order
@@ -55,6 +62,24 @@ public class Exam {
     public int getEnrollmentCount() { return enrollmentCount; }
     public void setEnrollmentCount(int c) { this.enrollmentCount = c; }
 
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public ExamType getExamType() { return examType; }
+    public void setExamType(ExamType examType) { this.examType = examType; }
+
+    public boolean isRequiresProjector() { return requiresProjector; }
+    public void setRequiresProjector(boolean requiresProjector) { this.requiresProjector = requiresProjector; }
+
+    public boolean isRequiresComputers() { return requiresComputers; }
+    public void setRequiresComputers(boolean requiresComputers) { this.requiresComputers = requiresComputers; }
+
+    public String getPreferredSession() { return preferredSession; }
+    public void setPreferredSession(String preferredSession) { this.preferredSession = preferredSession; }
+
+    public int getDifficultyLevel() { return difficultyLevel; }
+    public void setDifficultyLevel(int difficultyLevel) { this.difficultyLevel = difficultyLevel; }
+
     public boolean isCoreExam() {
         return Priority.CORE.equals(this.priority);
     }
@@ -64,6 +89,7 @@ public class Exam {
         return "Exam{id=" + id + ", code='" + subjectCode
              + "', name='" + subjectName
              + "', priority=" + priority
+             + ", type=" + examType
              + ", students=" + enrollmentCount + "}";
     }
 

@@ -61,13 +61,20 @@ public class RoomDAO extends BaseDAO {
             firstString(rs, "name"),
             firstInt(rs, "capacity"),
             firstBoolean(rs, "hasProjector", "has_projector"),
-            firstString(rs, "building")
+            firstBoolean(rs, "hasComputers", "has_computers"),
+            firstString(rs, "building"),
+            firstString(rs, "seatingType", "seating_type")
         );
     }
 
-    private String firstString(Document doc, String key) {
-        Object value = doc.get(key);
-        return value == null ? null : value.toString();
+    private String firstString(Document doc, String... keys) {
+        for (String key : keys) {
+            Object value = doc.get(key);
+            if (value != null) {
+                return value.toString();
+            }
+        }
+        return null;
     }
 
     private int firstInt(Document doc, String key) {
